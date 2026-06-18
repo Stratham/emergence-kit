@@ -52,9 +52,17 @@ never change, only the numbers do.
                                        └──────────────────────────────┘
 ```
 
+## Play in your browser (no install)
+
+The fastest way to try it: open **`web/dnd-dm.html`** — a single self-contained
+web app where an AI is the DM and the dice/HP/combat panel is real. Add an
+OpenAI-compatible API key in ⚙️, pick a ruleset, press **Begin Adventure**. See
+[`web/README.md`](web/README.md).
+
 ## Quick start (5 minutes)
 
 1. **Pick how the model will reach the tools** and follow that guide:
+   - `web/dnd-dm.html` — zero-install browser app; the AI calls the tools for you.
    - `guide/SETUP_CHATGPT.md` — no-code; you run the CLI and paste results back.
    - `guide/SETUP_API.md` — full automation; the model calls the tools itself.
    - `guide/SETUP_MCP.md` — full automation via an MCP server.
@@ -97,9 +105,12 @@ dnd-dungeon-master/
 │   ├── mcp_server.py              optional MCP server (stdlib)
 │   ├── state-schema.md            the persisted JSON state files
 │   └── test_dm_tools.py           tests proving the mechanics
-└── guide/
-    ├── SETUP_CHATGPT.md  SETUP_API.md  SETUP_MCP.md
-    └── EXAMPLE_SESSION.md
+├── guide/
+│   ├── SETUP_CHATGPT.md  SETUP_API.md  SETUP_MCP.md
+│   └── EXAMPLE_SESSION.md
+└── web/                           ← zero-install browser app (AI-powered)
+    ├── dnd-dm.html                self-contained: engine + UI + LLM tool-calling
+    └── README.md
 ```
 
 ## The tools (what the DM can call)
