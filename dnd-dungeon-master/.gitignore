@@ -1,0 +1,6 @@
+# Python
+__pycache__/
+*.pyc
+
+# Per-campaign state (created at play time; keep your saves out of the kit repo)
+campaign_state/

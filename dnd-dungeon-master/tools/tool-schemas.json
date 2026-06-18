@@ -1,0 +1,242 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "roll_dice",
+      "description": "Roll a dice expression and return the total. Use this for ANY random outcome (damage, ability dice, percentile, loot dice). Never invent dice results yourself.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "notation": {
+            "type": "string",
+            "description": "Dice notation, e.g. '2d6+3', '1d20', '4d6kh3' (keep highest 3), '10-1d4'."
+          },
+          "advantage": {
+            "type": "integer",
+            "enum": [-1, 0, 1],
+            "description": "0 normal, 1 advantage (roll twice keep higher total), -1 disadvantage.",
+            "default": 0
+          }
+        },
+        "required": ["notation"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "roll_check",
+      "description": "Resolve a check / saving throw / attack roll: rolls the die, adds a modifier, and compares to a difficulty class (DC). Returns natural roll, total, success, margin, and critical flags. Use for every adjudicated roll against a target number.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "modifier": {"type": "integer", "description": "Total bonus/penalty added to the roll.", "default": 0},
+          "dc": {"type": "integer", "description": "Difficulty class / target number to beat (>=). Omit for a raw roll."},
+          "die": {"type": "string", "description": "Resolution die for the chosen system. Default '1d20'.", "default": "1d20"},
+          "advantage": {"type": "integer", "enum": [-1, 0, 1], "default": 0}
+        },
+        "required": ["modifier"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "encounter_start",
+      "description": "Begin a combat/initiative encounter, clearing any previous one.",
+      "parameters": {
+        "type": "object",
+        "properties": {"name": {"type": "string", "description": "Encounter name, e.g. 'Goblin Ambush'."}},
+        "required": ["name"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "encounter_end",
+      "description": "End the current combat encounter and clear the initiative tracker.",
+      "parameters": {"type": "object", "properties": {}}
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "combat_status",
+      "description": "Return the current encounter: round, whose turn it is, and initiative order with HP/conditions.",
+      "parameters": {"type": "object", "properties": {}}
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "combatant_add",
+      "description": "Add a combatant to the active encounter. If 'initiative' is omitted, the engine rolls initiative using 'init_mod'. Returns the updated initiative order.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "initiative": {"type": "integer", "description": "Fixed initiative; omit to auto-roll."},
+          "init_mod": {"type": "integer", "description": "Modifier used when auto-rolling initiative.", "default": 0},
+          "hp": {"type": "integer", "description": "Current/max hit points."},
+          "ac": {"type": "integer", "description": "Armor class / defense value."}
+        },
+        "required": ["name"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "turn_next",
+      "description": "Advance to the next combatant's turn, wrapping to a new round when the order completes. Returns the current combatant and round number.",
+      "parameters": {"type": "object", "properties": {}}
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "apply_damage",
+      "description": "Apply damage to a character/combatant. Temporary HP absorbs first; marks 'down' when HP reaches 0. Syncs both the character sheet and combat entry.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "amount": {"type": "integer", "minimum": 0}
+        },
+        "required": ["name", "amount"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "heal",
+      "description": "Restore hit points to a character/combatant, capped at max_hp.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "amount": {"type": "integer", "minimum": 0}
+        },
+        "required": ["name", "amount"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "condition_add",
+      "description": "Apply a status condition (e.g. poisoned, prone, frightened) to a character/combatant.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "condition": {"type": "string"}
+        },
+        "required": ["name", "condition"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "condition_clear",
+      "description": "Remove a status condition from a character/combatant.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "condition": {"type": "string"}
+        },
+        "required": ["name", "condition"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "character_set",
+      "description": "Create or update a character sheet. 'fields' is a free-form object; common keys: max_hp, hp, temp_hp, ac, level, and a nested 'stats' object for ability scores/skills. Numbers are stored exactly.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "fields": {"type": "object", "description": "Sheet fields to set, e.g. {\"max_hp\":24,\"hp\":24,\"ac\":15,\"stats\":{\"str\":3}}."}
+        },
+        "required": ["name", "fields"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "character_get",
+      "description": "Fetch a character's full sheet (HP, conditions, inventory, stats).",
+      "parameters": {
+        "type": "object",
+        "properties": {"name": {"type": "string"}},
+        "required": ["name"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "inventory",
+      "description": "Manage a character's inventory.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "action": {"type": "string", "enum": ["add", "remove", "list"]},
+          "item": {"type": "string", "description": "Required for add/remove."},
+          "qty": {"type": "integer", "default": 1}
+        },
+        "required": ["name", "action"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "var_set",
+      "description": "Set a campaign variable for persistent world/plot state (e.g. quest_stage, faction_reputation, day_count).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "key": {"type": "string"},
+          "value": {"description": "Any JSON value."}
+        },
+        "required": ["key", "value"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "var_get",
+      "description": "Read a campaign variable.",
+      "parameters": {
+        "type": "object",
+        "properties": {"key": {"type": "string"}},
+        "required": ["key"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "table_roll",
+      "description": "Roll on a random table. Pass 'entries' to define/overwrite a named table; thereafter the name alone re-rolls it. Returns the rolled index and result.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "entries": {"type": "array", "items": {"type": "string"}, "description": "Table contents; one entry is chosen uniformly at random."}
+        },
+        "required": ["name"]
+      }
+    }
+  }
+]
