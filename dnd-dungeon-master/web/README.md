@@ -3,7 +3,20 @@
 A **single self-contained HTML file** that plays D&D-style RPGs with an AI as
 Dungeon Master, right in your browser. No build step, no server, no dependencies.
 
+Two builds, same engine and UI — pick by which model you want as DM:
+
+| File | DM provider | Key | Default model |
+|------|-------------|-----|---------------|
+| [`dnd-dm.html`](dnd-dm.html) | Any **OpenAI-compatible** Chat Completions API (OpenAI, OpenRouter, local) | `sk-…` | `gpt-4o` |
+| [`dnd-dm-claude.html`](dnd-dm-claude.html) | **Claude** (Anthropic Messages API) | `sk-ant-…` | `claude-opus-4-8` |
+
 ![screenshot](screenshot.png)
+
+> **Claude build:** uses the Anthropic Messages API with adaptive thinking; Claude
+> calls the dice/combat tools itself via Anthropic tool-use. Browser calls are
+> enabled with the `anthropic-dangerous-direct-browser-access` header, so no proxy
+> is needed. Get a key at console.anthropic.com. It keeps its own campaigns/settings
+> namespace, so it won't clash with the OpenAI build. ![Claude build](screenshot-claude.png)
 
 The AI narrates and judges; the page's built-in engine owns the mechanics, so
 **dice, hit points, initiative, conditions, and inventory are real, not
